@@ -102,3 +102,6 @@ ENV/
 
 # VS Code project settings
 .vscode/
+
+# data file
+*.pkl
