@@ -47,7 +47,7 @@ class RelationNetworks(nn.Module):
         self.lstm_hidden = lstm_hidden
         self.mlp_hidden = mlp_hidden
 
-        self.initialize_weights()
+        #self.initialize_weights()
 
     def forward(self, image, question, question_len):
         conv = self.conv(image)
