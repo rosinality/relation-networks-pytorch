@@ -9,8 +9,8 @@ def preprocess(root, split, word_dic=None, answer_dic=None):
     if word_dic is None:
         word_dic = {}
 
-    if possible_answer is None:
-        possible_answer = {}
+    if answer_dic is None:
+        answer_dic = {}
 
     with open(os.path.join(root, f'CLEVR_{split}_questions.json')) as f:
         data = json.load(f)
