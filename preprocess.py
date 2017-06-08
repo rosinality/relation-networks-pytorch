@@ -5,8 +5,23 @@ import pickle
 
 import nltk
 import tqdm
+from torchvision import transforms
 
-def preprocess(root, split, word_dic=None, answer_dic=None):
+from transforms import Scale
+
+transform = transforms.Compose([
+    Scale([128, 128]),
+    transforms.Pad(4)
+])
+
+def process_image(root, split, image_file):
+    img = Image.open(os.path.join(root, 'images',
+                                split, image_file)).convert('RGB')
+    img = transform(img)
+    new_path = os.path.join(root, 'images', f'{split}_processed', image_file)
+    img.save(new_path)
+
+def process_question(root, split, word_dic=None, answer_dic=None):
     if word_dic is None:
         word_dic = {}
 
@@ -54,8 +69,13 @@ def preprocess(root, split, word_dic=None, answer_dic=None):
 if __name__ == '__main__':
     root = sys.argv[1]
 
-    word_dic, answer_dic = preprocess(root, 'train')
-    preprocess(root, 'val', word_dic, answer_dic)
+    word_dic, answer_dic = process_question(root, 'train')
+    process_question(root, 'val', word_dic, answer_dic)
 
     with open('data/dic.pkl', 'wb') as f:
         pickle.dump({'word_dic': word_dic, 'answer_dic': answer_dic}, f)
+
+    train_images = os.listdir(os.path.join(root, images, 'train'))
+
+    for image in train_images:
+        process_image(root, 'train', image)
