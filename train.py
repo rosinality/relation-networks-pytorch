@@ -14,7 +14,7 @@ from dataset import CLEVR, collate_data, transform
 from model import RelationNetworks
 
 batch_size = 64
-n_epoch = 180
+n_epoch = 80
 
 with open('data/dic.pkl', 'rb') as f:
     dic = pickle.load(f)
@@ -76,3 +76,7 @@ for epoch in range(n_epoch):
 
     for k, v in family_total.items():
         print('{}: {:.5f}'.format(k, family_correct[k] / v))
+
+    with open('checkpoint/checkpoint_{}.model' \
+            .format(str(epoch + 1).zfill(2)), 'wb') as f:
+        torch.save(relnet, f)
