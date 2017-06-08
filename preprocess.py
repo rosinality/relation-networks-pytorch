@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import pickle
 
 import nltk
@@ -12,7 +13,8 @@ def preprocess(root, split, word_dic=None, answer_dic=None):
     if answer_dic is None:
         answer_dic = {}
 
-    with open(os.path.join(root, f'CLEVR_{split}_questions.json')) as f:
+    with open(os.path.join(root, 'questions',
+                        f'CLEVR_{split}_questions.json')) as f:
         data = json.load(f)
 
     result = []
