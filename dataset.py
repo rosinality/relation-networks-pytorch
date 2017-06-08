@@ -21,7 +21,8 @@ class CLEVR(Dataset):
 
     def __getitem__(self, index):
         imgfile, question, answer = self.data[index]
-        img = Image.open(os.path.join(self.root, 'images', self.split, imgfile))
+        img = Image.open(os.path.join(self.root, 'images',
+                                    self.split, imgfile)).convert('RGB')
 
         img = self.transform(img)
 
@@ -57,4 +58,4 @@ def collate_data(batch):
         answers.append(answer)
 
     return torch.stack(images), torch.from_numpy(questions), \
-        torch.LongTensor(lengths), torch.LongTensor(answers)
+        lengths, torch.LongTensor(answers)
