@@ -6,12 +6,12 @@ import pickle
 import nltk
 import tqdm
 from torchvision import transforms
-
+from PIL import Image
 from transforms import Scale
 
 transform = transforms.Compose([
     Scale([128, 128]),
-    transforms.Pad(4)
+    transforms.Pad(4),
 ])
 
 def process_image(root, split, image_file):
@@ -69,13 +69,13 @@ def process_question(root, split, word_dic=None, answer_dic=None):
 if __name__ == '__main__':
     root = sys.argv[1]
 
-    word_dic, answer_dic = process_question(root, 'train')
-    process_question(root, 'val', word_dic, answer_dic)
+    #word_dic, answer_dic = process_question(root, 'train')
+    #process_question(root, 'val', word_dic, answer_dic)
 
-    with open('data/dic.pkl', 'wb') as f:
-        pickle.dump({'word_dic': word_dic, 'answer_dic': answer_dic}, f)
+    #with open('data/dic.pkl', 'wb') as f:
+    #    pickle.dump({'word_dic': word_dic, 'answer_dic': answer_dic}, f)
 
-    train_images = os.listdir(os.path.join(root, images, 'train'))
+    train_images = os.listdir(os.path.join(root, 'images', 'train'))
 
-    for image in train_images:
+    for image in tqdm.tqdm(train_images):
         process_image(root, 'train', image)
