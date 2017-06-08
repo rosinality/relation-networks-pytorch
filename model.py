@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from torch.nn.init import kaiming_uniform
 
 class RelationNetworks(nn.Module):
     def __init__(self, n_vocab, conv_hidden=24, embed_hidden=32,
@@ -46,6 +47,8 @@ class RelationNetworks(nn.Module):
         self.lstm_hidden = lstm_hidden
         self.mlp_hidden = mlp_hidden
 
+        self.initialize_weights()
+
     def forward(self, image, question, question_len):
         conv = self.conv(image)
         batch_size, n_channel, conv_h, conv_w = conv.size()
@@ -65,7 +68,20 @@ class RelationNetworks(nn.Module):
         concat_vec = torch.cat([conv1, conv2, q_tile], 2).view(-1, self.n_concat)
         g = self.g(concat_vec)
         g = g.view(-1, n_pair * n_pair, self.mlp_hidden).sum(1).view(-1, self.mlp_hidden)
-        
+
         f = self.f(g)
 
         return f
+
+    def _init_layer(self, layers, name):
+        for layer in layers:
+            if str(layer).startswith(name):
+                kaiming_uniform(layer.weight.data)
+
+                if layer.bias is not None:
+                    layer.bias.data.zero_()
+
+    def initialize_weights(self):
+        self._init_layer(self.conv, 'Conv')
+        self._init_layer(self.g, 'Linear')
+        self._init_layer(self.f, 'Linear')
