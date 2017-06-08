@@ -59,4 +59,4 @@ def collate_data(batch):
         families.append(family)
 
     return torch.stack(images), torch.from_numpy(questions), \
-        lengths, torch.LongTensor(answers), family
+        lengths, torch.LongTensor(answers), families

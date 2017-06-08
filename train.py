@@ -56,7 +56,7 @@ for epoch in range(n_epoch):
         pbar.set_description('Epoch: {}; Loss: {:.5f}; Avg: {:.5f}'. \
                             format(epoch + 1, loss.data[0], moving_loss))
 
-    valid_set = DataLoader(CLEVR(sys.argv[1], 'valid', transform=transform),
+    valid_set = DataLoader(CLEVR(sys.argv[1], 'val', transform=transform),
                     batch_size=batch_size, num_workers=4,
                     collate_fn=collate_data)
     dataset = iter(valid_set)
@@ -69,8 +69,7 @@ for epoch in range(n_epoch):
             Variable(image).cuda(), Variable(question).cuda()
 
         output = relnet(image, question, q_len)
-        correct = output.data.numpy().argmax(1) == answer
-
+        correct = output.data.cpu().numpy().argmax(1) == answer.numpy()
         for c, fam in zip(correct, family):
             if c: family_correct[fam] += 1
             family_total[fam] += 1
