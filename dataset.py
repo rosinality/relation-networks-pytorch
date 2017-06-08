@@ -8,7 +8,7 @@ from torchvision import transforms
 
 class CLEVR(Dataset):
     def __init__(self, root, split='train', transform=None):
-        with open(f'data/{mode}.pkl', 'wb') as f:
+        with open(f'data/{split}.pkl', 'wb') as f:
             self.data = pickle.load(f)
 
         self.data
