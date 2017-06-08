@@ -51,5 +51,5 @@ def collate_data(batch):
         questions[i, :length] = question
         answers.append(answer)
 
-    return torch.stack(images), torch.from_numpy(questions),
+    return torch.stack(images), torch.from_numpy(questions), \
         torch.LongTensor(answers)
