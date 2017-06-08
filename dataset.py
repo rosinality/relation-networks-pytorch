@@ -7,6 +7,8 @@ import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 
+from transforms import Scale
+
 class CLEVR(Dataset):
     def __init__(self, root, split='train', transform=None):
         with open(f'data/{split}.pkl', 'rb') as f:
@@ -20,7 +22,7 @@ class CLEVR(Dataset):
     def __getitem__(self, index):
         imgfile, question, answer = self.data[index]
         img = Image.open(os.path.join(self.root, 'images', self.split, imgfile))
-        
+
         img = self.transform(img)
 
         return img, question, answer
@@ -29,7 +31,7 @@ class CLEVR(Dataset):
         return len(self.data)
 
 transform = transforms.Compose([
-    transforms.Scale(128),
+    Scale([128, 128]),
     transforms.Pad(4),
     transforms.RandomCrop([128, 128]),
     transforms.ToTensor(),
