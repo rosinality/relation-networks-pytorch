@@ -56,3 +56,6 @@ if __name__ == '__main__':
 
     word_dic, answer_dic = preprocess(root, 'train')
     preprocess(root, 'val', word_dic, answer_dic)
+
+    with open('data/dic.pkl', 'wb') as f:
+        pickle.dump({'word_dic': word_dic, 'answer_dic': answer_dic}, f)
