@@ -16,17 +16,7 @@ from model import RelationNetworks
 batch_size = 64
 n_epoch = 80
 
-with open('data/dic.pkl', 'rb') as f:
-    dic = pickle.load(f)
-
-n_words = len(dic['word_dic']) + 1
-n_answers = len(dic['answer_dic'])
-
-relnet = RelationNetworks(n_words).cuda()
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(relnet.parameters(), lr=2.5e-4)
-
-for epoch in range(n_epoch):
+def train(epoch):
     train_set = DataLoader(CLEVR(sys.argv[1], transform=transform),
                     batch_size=batch_size, num_workers=4,
                     collate_fn=collate_data)
@@ -56,6 +46,7 @@ for epoch in range(n_epoch):
         pbar.set_description('Epoch: {}; Loss: {:.5f}; Avg: {:.5f}'. \
                             format(epoch + 1, loss.data[0], moving_loss))
 
+def valid(epoch):
     valid_set = DataLoader(CLEVR(sys.argv[1], 'val', transform=transform),
                     batch_size=batch_size, num_workers=4,
                     collate_fn=collate_data)
@@ -74,9 +65,28 @@ for epoch in range(n_epoch):
             if c: family_correct[fam] += 1
             family_total[fam] += 1
 
-    for k, v in family_total.items():
-        print('{}: {:.5f}'.format(k, family_correct[k] / v))
+    with open('log/log_{}.txt'.format(str(epoch + 1).zfill(2)), 'w') as w:
+        for k, v in family_total.items():
+            w.write('{}: {:.5f}'.format(k, family_correct[k] / v))
 
-    with open('checkpoint/checkpoint_{}.model' \
+    print('Avg Acc: {:.5f}'.format(sum(family_correct.values()) / \
+                                sum(family_total.values())))
+
+if __name__ == '__main__':
+    with open('data/dic.pkl', 'rb') as f:
+        dic = pickle.load(f)
+
+    n_words = len(dic['word_dic']) + 1
+    n_answers = len(dic['answer_dic'])
+
+    relnet = RelationNetworks(n_words).cuda()
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(relnet.parameters(), lr=2.5e-4)
+
+    for epoch in range(n_epoch):
+        train(epoch)
+        valid(epoch)
+
+        with open('checkpoint/checkpoint_{}.model' \
             .format(str(epoch + 1).zfill(2)), 'wb') as f:
-        torch.save(relnet, f)
+            torch.save(relnet, f)

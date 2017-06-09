@@ -33,7 +33,8 @@ class RelationNetworks(nn.Module):
             nn.ReLU(),
             nn.Linear(mlp_hidden, mlp_hidden),
             nn.ReLU(),
-            nn.Linear(mlp_hidden, mlp_hidden))
+            nn.Linear(mlp_hidden, mlp_hidden),
+            nn.ReLU())
 
         self.f = nn.Sequential(
             nn.Linear(mlp_hidden, mlp_hidden),
@@ -55,19 +56,25 @@ class RelationNetworks(nn.Module):
         n_pair = conv_h * conv_w
 
         embed = self.embed(question)
-        embed_pack = nn.utils.rnn.pack_padded_sequence(embed, question_len, batch_first=True)
+        embed_pack = nn.utils.rnn.pack_padded_sequence(embed, question_len,
+                                                    batch_first=True)
         _, (h, c) = self.lstm(embed_pack)
-        q_tile = h.permute(1, 0, 2).expand(batch_size, n_pair * n_pair, self.lstm_hidden)
+        q_tile = h.permute(1, 0, 2) \
+                .expand(batch_size, n_pair * n_pair, self.lstm_hidden)
 
         conv_tr = conv.permute(0, 2, 3, 1)
-        conv1 = conv_tr.unsqueeze(1).expand(batch_size, n_pair, conv_h, conv_w, n_channel)
-        conv2 = conv_tr.unsqueeze(3).expand(batch_size, conv_h, conv_w, n_pair, n_channel)
+        conv1 = conv_tr.unsqueeze(1) \
+                    .expand(batch_size, n_pair, conv_h, conv_w, n_channel)
+        conv2 = conv_tr.unsqueeze(3) \
+                    .expand(batch_size, conv_h, conv_w, n_pair, n_channel)
         conv1 = conv1.contiguous().view(-1, n_pair * n_pair, n_channel)
         conv2 = conv2.contiguous().view(-1, n_pair * n_pair, n_channel)
 
-        concat_vec = torch.cat([conv1, conv2, q_tile], 2).view(-1, self.n_concat)
+        concat_vec = torch.cat([conv1, conv2, q_tile], 2) \
+                        .view(-1, self.n_concat)
         g = self.g(concat_vec)
-        g = g.view(-1, n_pair * n_pair, self.mlp_hidden).sum(1).view(-1, self.mlp_hidden)
+        g = g.view(-1, n_pair * n_pair, self.mlp_hidden) \
+                .sum(1).view(-1, self.mlp_hidden)
 
         f = self.f(g)
 
