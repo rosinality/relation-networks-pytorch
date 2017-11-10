@@ -1,3 +1,6 @@
+# ! Important !
+Currently I couldn't reproduce the result of the paper.
+
 # relation-networks-pytorch
 Relation Networks (https://arxiv.org/abs/1706.01427) for CLEVR implemented in PyTorch
 
