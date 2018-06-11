@@ -23,7 +23,7 @@ python train.py [CLEVR directory]
 
 # Reproduce status
 
-Finally reproduced this, thanks to [@mesnico](https://github.com/mesnico) ! (https://github.com/mesnico/RelationNetworks-CLEVR) Crucial configurations to reproduce the result is large batch sizes (640), increase learning rate to 2x for every 20 epochs until it reaches maximum learning rate, and inverting questions, that is, feed question words into LSTM in reverse order.
+Finally reproduced this, thanks to [@mesnico](https://github.com/mesnico)! (https://github.com/mesnico/RelationNetworks-CLEVR) Crucial configurations to reproduce the result is large batch sizes (640), increase learning rate to 2x for every 20 epochs until it reaches maximum learning rate, and inverting questions, that is, feed question words into LSTM in reverse order.
 
 Accuracy plots
 
